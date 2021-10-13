@@ -46,7 +46,7 @@ class WindowClass(QMainWindow, form_class):
 
 
     def insert_url(self, text):
-        print(text)
+
         if 'data.go.kr' in text:
             url = text
             html = urlopen(url)
@@ -124,32 +124,44 @@ class WindowClass(QMainWindow, form_class):
             self.progress += 1
             self.progressBar.setValue(self.progress)
 
+
+            # display
+            if result_1_1 == result_1_2 == result_1_2_1 == result_1_3 == '적합':
+                self.result_1.append('모두 적합')
+            else:
+                self.result_1.append('기관명 누락 ' + result_1_1)
+                self.result_1.append('기관명 누락 ' + result_1_1)
+                self.result_1.append('등록주기포함 ' + result_1_2)
+                self.result_1.append('등록주기포함(날짜) ' + result_1_2_1)
+                self.result_1.append('동일기관 목록명중복 ' + result_1_3)
+
+
             # 키워드 기관명 사용
             keword = table_df[:][3][7]
             corp_list = corp.split(' ')
             keyword_list = keword.split(',')
-            if set(corp_list) & set(keyword_list):
-                result_3_1 = '오류: \n기관명을 키워드로 사용함 \n키워드 :' + keword
-            else:
-                result_3_1 = '적합'
+            # if set(corp_list) & set(keyword_list):
+            #     result_3_1 = '오류: \n기관명을 키워드로 사용함 \n키워드 :' + keword
+            # else:
+            #     result_3_1 = '적합'
 
             # 동일기관 키워드 중복
 
-            if keword_repeat['공공데이터_기본키'].isin([primary_key]).any():
-                if ' ' not in keword:
-                    keword_split = keword.split(',')
-                    keword_split_str = ", ".join(keword_split)
-                is_repeat_keyword = keword_repeat['키워드'] == keword_split_str
-                repeat_keyword_df = keword_repeat[is_repeat_keyword]
-                count = np.array(repeat_keyword_df['중복개수'].values[0])
-                result_3_2 = '오류 : \n' + str(count) + '건의 동일기관 키워드 중복이 있음:(키워드: ' + keword + ')'
-
-                for i in range(int(count)):
-                    result_3_2 += '\n' + str(np.array(repeat_keyword_df['공공데이터_기본키'].values[i]))
-                    result_3_2 += str(np.array(repeat_keyword_df['공공데이터_제목'].values[i]))
-
-            else:
-                result_3_2 = '적합'
+            # if keword_repeat['공공데이터_기본키'].isin([primary_key]).any():
+            #     if ' ' not in keword:
+            #         keword_split = keword.split(',')
+            #         keword_split_str = ", ".join(keword_split)
+            #     is_repeat_keyword = keword_repeat['키워드'] == keword_split_str
+            #     repeat_keyword_df = keword_repeat[is_repeat_keyword]
+            #     count = np.array(repeat_keyword_df['중복개수'].values[0])
+            #     result_3_2 = '오류 : \n' + str(count) + '건의 동일기관 키워드 중복이 있음:(키워드: ' + keword + ')'
+            #
+            #     for i in range(int(count)):
+            #         result_3_2 += '\n' + str(np.array(repeat_keyword_df['공공데이터_기본키'].values[i]))
+            #         result_3_2 += str(np.array(repeat_keyword_df['공공데이터_제목'].values[i]))
+            #
+            # else:
+            #     result_3_2 = '적합'
 
             # 키워드 NULL
             if len(keyword_list):
@@ -166,44 +178,56 @@ class WindowClass(QMainWindow, form_class):
             self.progress += 1
             self.progressBar.setValue(self.progress)
 
+            self.result_2.append('적합')
+
+            result_3_1 = result_3_2 = '적합'
+
+            if result_3_1 == result_3_2 == result_3_3 == result_3_4 == '적합':
+                self.result_3.append('전부 적합')
+            else:
+                self.result_3.append('키워드 기관명 사용 ' + result_3_1)
+                self.result_3.append('동일기관 키워드 중복 ' + result_3_2)
+                self.result_3.append('키워드 NULL ' + result_3_3)
+                self.result_3.append('동일 키워드 ' + result_3_4)
+
 
             # 설명 적절성(50자)
-            if table_df[:][0][10] == '설명':
-                desc = table_df[:][1][10]
-            else:
-                desc = table_df[:][1][11]
-            if len(desc) < 50:
-                result_4_1 = '오류 : \n설명의 글자수가' + str(
-                    len(desc)) + '자\n기관에서 제공하는 데이터의 세부 컬럼이나 내용을 고려하여 이용자들의 이용편의성을 높일수 있도록 상세히 작성 요망'
-            else:
-                result_4_1 = '적합'
+            # if table_df[:][0][10] == '설명':
+            #     desc = table_df[:][1][10]
+            # else:
+            #     desc = table_df[:][1][11]
+            # if len(desc) < 50:
+            #     result_4_1 = '오류 : \n설명의 글자수가' + str(
+            #         len(desc)) + '자\n기관에서 제공하는 데이터의 세부 컬럼이나 내용을 고려하여 이용자들의 이용편의성을 높일수 있도록 상세히 작성 요망'
+            # else:
+            #     result_4_1 = '적합'
 
             # 동일기관 설명 중복
-            if desc_repeat['공공데이터_기본키'].isin([primary_key]).any():
-                result_4_2 = '오류'
-                is_repeat_desc = desc_repeat['공공데이터_설명'] == desc
-                repeat_desc_df = desc_repeat[is_repeat_desc]
-                count = np.array(repeat_desc_df['중복개수'].values[0])
-                result_4_2 = '오류 : \n' + str(count) + '건의 설명 중복이 있음'
-                for i in range(int(count)):
-                    result_4_2 += '\n' + str(np.array(repeat_desc_df['공공데이터_기본키'].values[i]))
-                    result_4_2 += str(np.array(repeat_desc_df['공공데이터_제목'].values[i]))
-            else:
-                result_4_2 = '적합'
+            # if desc_repeat['공공데이터_기본키'].isin([primary_key]).any():
+            #     result_4_2 = '오류'
+            #     is_repeat_desc = desc_repeat['공공데이터_설명'] == desc
+            #     repeat_desc_df = desc_repeat[is_repeat_desc]
+            #     count = np.array(repeat_desc_df['중복개수'].values[0])
+            #     result_4_2 = '오류 : \n' + str(count) + '건의 설명 중복이 있음'
+            #     for i in range(int(count)):
+            #         result_4_2 += '\n' + str(np.array(repeat_desc_df['공공데이터_기본키'].values[i]))
+            #         result_4_2 += str(np.array(repeat_desc_df['공공데이터_제목'].values[i]))
+            # else:
+            #     result_4_2 = '적합'
             self.progress += 1
             self.progressBar.setValue(self.progress)
 
             # 기준일 경과
-            if update_cycle == ('분기' or '월간' or '연간'):
-                if pd.isna(table_df[:][3][4]):
-                    result_5_1 = '오류 : \n기준일 누락'
-                else:
-                    if table_df[:][3][4] < datetime.today().strftime("%Y-%m-%d"):
-                        result_5_1 = '오류 : \n' + datetime.today().strftime("%Y-%m-%d") + ' 점검일 현재 차기등록예정일이 경과됨. 수정 요망'
-                    else:
-                        result_5_1 = '적합'
-            else:
-                result_5_1 = '적합'
+            # if update_cycle == ('분기' or '월간' or '연간'):
+            #     if pd.isna(table_df[:][3][4]):
+            #         result_5_1 = '오류 : \n기준일 누락'
+            #     else:
+            #         if table_df[:][3][4] < datetime.today().strftime("%Y-%m-%d"):
+            #             result_5_1 = '오류 : \n' + datetime.today().strftime("%Y-%m-%d") + ' 점검일 현재 차기등록예정일이 경과됨. 수정 요망'
+            #         else:
+            #             result_5_1 = '적합'
+            # else:
+            #     result_5_1 = '적합'
             self.progress += 1
             self.progressBar.setValue(self.progress)
 
@@ -254,7 +278,7 @@ class WindowClass(QMainWindow, form_class):
                     except UnicodeDecodeError:
                         if file_extension == 'CSV':
                             df = pd.read_csv(contentUrl)
-                            if table_df[:][3][5] == str(len(df)):
+                            if table_df[:][3][5] <= str(len(df))+1 and table_df[:][3][5] >= str(len(df))-1:
                                 result_6 = '적합'
                             else:
                                 result_6 = '오류 : \n데이터의 실 건수가 타이틀을 제외하고 ' + str(len(df)) + "건임\n"
@@ -274,6 +298,8 @@ class WindowClass(QMainWindow, form_class):
                     result_6 = 'CSV아님 직접확인'
             self.progress += 1
             self.progressBar.setValue(self.progress)
+            self.result_6.append(result_6)
+
 
             # 첨부파일 확장자
             if result_7 == '적합':
@@ -294,49 +320,30 @@ class WindowClass(QMainWindow, form_class):
             self.progress += 1
             self.progressBar.setValue(self.progress)
 
-            # display
-            if result_1_1 == result_1_2 == result_1_2_1 == result_1_3 == '적합':
-                self.result_1.append('모두 적합')
-            else:
-                self.result_1.append('기관명 누락 ' + result_1_1)
-                self.result_1.append('기관명 누락 ' + result_1_1)
-                self.result_1.append('등록주기포함 ' + result_1_2)
-                self.result_1.append('등록주기포함(날짜) ' + result_1_2_1)
-                self.result_1.append('동일기관 목록명중복 ' + result_1_3)
 
-            self.result_2.append('적합')
+            self.result_7.append(result_7)
 
-            if result_3_1 == result_3_2 == result_3_3 == result_3_4 == '적합':
-                self.result_3.append('전부 적합')
-            else:
-                self.result_3.append('키워드 기관명 사용 ' + result_3_1)
-                self.result_3.append('동일기관 키워드 중복 ' + result_3_2)
-                self.result_3.append('키워드 NULL ' + result_3_3)
-                self.result_3.append('동일 키워드 ' + result_3_4)
 
+
+
+            result_4_1 = result_4_2 = '적합'
             if result_4_1 == result_4_2 == '적합':
                 self.result_4.append('전부 적합')
             else:
                 self.result_4.append('50자미만 ' + result_4_1)
                 self.result_4.append('동일기관 설명 중복 ' + result_4_2)
 
+            result_5_1 = '적합'
             self.result_5.append(result_5_1)
-
-            self.result_6.append(result_6)
-
-            self.result_7.append(result_7)
 
             self.progress += 1
             self.progressBar.setValue(self.progress)
+
         else :
             msg = QMessageBox()
-
             msg.setWindowTitle('경고')
-
             msg.setText('올바른 공공데이터포털 파일데이터 주소를 입력해주세요')
-
             msg.setStandardButtons(QMessageBox.Ok)
-
             msg.exec_()
 
 
