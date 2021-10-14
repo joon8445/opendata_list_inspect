@@ -86,7 +86,7 @@ class WindowClass(QMainWindow, form_class):
                 if (
                         '월간' in file_title or '연간' in 'file_title' or '수시' in file_title or '분기' in file_title or '년간' in file_title or 'API' in file_title or file_title.endswith(
                         '_')):
-                    result_1_2 = '오류 : 업데이트 주기가 \'수시\'가 아니면서 (일간,월간,분기,년간) 목록명에 일자,월,년도 형태(YYYYMMDD, YYYYMM, YYYY 등)의 내용이 포함되면 오류'
+                    result_1_2 = '오류 : \n업데이트 주기가 \'수시\'가 아니면서 (일간,월간,분기,년간) 목록명에 일자,월,년도 형태(YYYYMMDD, YYYYMM, YYYY 등)의 내용이 포함되면 오류'
                     result_1_2 += '\n: ' + file_title
                 else:
                     result_1_2 = '적합'
@@ -95,8 +95,15 @@ class WindowClass(QMainWindow, form_class):
             if '수시' in update_cycle:
                 result_1_2_1 = '적합'
             else:
-                if any(chr.isdigit() for chr in file_title):
-                    result_1_2_1 = '오류 : 직접확인'
+                count = 0
+                for chr in file_title:
+                    if chr.isdigit():
+                        count += 1
+                        print(count)
+
+                if count > 3:
+                    result_1_2_1 = '(숫자4개이상 포함) 직접확인하세요 \n오류  : 업데이트 주기가 \'수시\'가 아니면서 (일간,월간,분기,년간) 목록명에 일자,월,년도 형태(YYYYMMDD, YYYYMM, YYYY 등)의 내용이 포함되면 오류'
+                    result_1_2_1 += '\n: ' + file_title
                 else:
                     result_1_2_1 = '적합'
 
@@ -246,20 +253,44 @@ class WindowClass(QMainWindow, form_class):
                             file_format = file_format.split("\"")[0].strip()
                             if file_format != file_extension:
                                 result_7 = '오류'
-
-            # 실 데이터 건수 확인
+            # 첨부파일 확장자
             provide = table_df[:][1][9]
             if provide.startswith('기관자체'):
                 result_7 = '직접확인 (바로가기)'
-                result_6 = '적합 (바로가기)'
-            else:
+            if result_7 == '적합':
                 scripts = bsObject.find_all('script')
                 for script in scripts:
                     if 'contentUrl' in script.text:
                         contentUrl = script.text.strip()
                         contentUrl = contentUrl.split("contentUrl\": \"")[1].strip()
                         contentUrl = contentUrl.split("\"")[0].strip()
+                try:
+                    ans = wget.download(contentUrl, out="./data")
+                except Exception as err:
+                    # stop(err)
+                    ans = wget.download(contentUrl)
 
+                ansList = ans.split(".")
+                extend = ansList[-1]
+                if file_extension.lower() == extend:
+                    result_7 = '적합'
+                elif extend == 'zip':
+                    result_7 = '적합(zip)'
+                else:
+                    result_7 = '오류 : 첨부파일의 확장자가 잘못 등록되었음\n' + file_extension + ' -> ' + extend + '로 수정 요망'
+
+
+            self.progress += 1
+            self.progressBar.setValue(self.progress)
+
+            self.result_7.append(result_7)
+
+            # 실 데이터 건수 확인
+            provide = table_df[:][1][9]
+            if provide.startswith('기관자체'):
+                result_7 = '직접확인 (바로가기)'
+                result_6 = '적합 (바로가기)'
+            elif extend == 'csv':
                 if 'data.go.kr' in contentUrl:
                     try:
                         if file_extension == 'CSV':
@@ -296,32 +327,14 @@ class WindowClass(QMainWindow, form_class):
 
                 else:
                     result_6 = 'CSV아님 직접확인'
+            else:
+                result_6 = 'CSV아님 직접확인'
             self.progress += 1
             self.progressBar.setValue(self.progress)
             self.result_6.append(result_6)
 
 
-            # 첨부파일 확장자
-            if result_7 == '적합':
-                try:
-                    ans = wget.download(contentUrl, out="./data")
-                except Exception as err:
-                    #stop(err)
-                    ans = wget.download(contentUrl)
 
-                ansList = ans.split(".")
-                extend = ansList[-1]
-                if file_extension.lower() == extend:
-                    result_7 = '적합'
-                elif extend == 'zip':
-                    result_7 = '적합(zip)'
-                else:
-                    result_7 = '오류 : 첨부파일의 확장자가 잘못 등록되었음\n' + file_extension + ' -> ' + extend + '로 수정 요망'
-            self.progress += 1
-            self.progressBar.setValue(self.progress)
-
-
-            self.result_7.append(result_7)
 
 
 
