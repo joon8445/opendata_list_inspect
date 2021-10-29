@@ -260,31 +260,31 @@ class WindowClass(QMainWindow, form_class):
                         contentUrl = contentUrl.split("contentUrl\": \"")[1].strip()
                         contentUrl = contentUrl.split("\"")[0].strip()
 
-                if 'data.go.kr' in contentUrl:
-                    try:
-                        if file_extension == 'CSV':
-                            df = pd.read_csv(contentUrl, encoding='cp949')
-                            if table_df[:][3][5] == str(len(df)):
-                                result_6 = '적합'
-                            else:
-                                result_6 = '오류 : \n데이터의 실 건수가 타이틀을 제외하고 ' + str(len(df)) + "건임\n"
-                                result_6 += str(table_df[:][3][5]) + " -> " + str(len(df)) + ' 수정 요망'
-                        elif file_extension == 'HWP':
-                            result_6 = '적합 (HWP)'
-                        elif file_extension == 'PDF':
-                            result_6 = '적합 (HWP)'
-                        else:
-                            result_6 = 'CSV아님 직접확인'
-                    except UnicodeDecodeError:
-                        if file_extension == 'CSV':
-                            df = pd.read_csv(contentUrl)
-                            if table_df[:][3][5] <= str(len(df))+1 and table_df[:][3][5] >= str(len(df))-1:
-                                result_6 = '적합'
-                            else:
-                                result_6 = '오류 : \n데이터의 실 건수가 타이틀을 제외하고 ' + str(len(df)) + "건임\n"
-                                result_6 += str(table_df[:][3][5]) + " -> " + str(len(df)) + ' 수정 요망'
-                        else:
-                            result_6 = 'CSV아님 직접확인'
+                # if 'data.go.kr' in contentUrl:
+                #     try:
+                #         if file_extension == 'CSV':
+                #             df = pd.read_csv(contentUrl, encoding='cp949')
+                #             if table_df[:][3][5] == str(len(df)):
+                #                 result_6 = '적합'
+                #             else:
+                #                 result_6 = '오류 : \n데이터의 실 건수가 타이틀을 제외하고 ' + str(len(df)) + "건임\n"
+                #                 result_6 += str(table_df[:][3][5]) + " -> " + str(len(df)) + ' 수정 요망'
+                #         elif file_extension == 'HWP':
+                #             result_6 = '적합 (HWP)'
+                #         elif file_extension == 'PDF':
+                #             result_6 = '적합 (HWP)'
+                #         else:
+                #             result_6 = 'CSV아님 직접확인'
+                #     except UnicodeDecodeError:
+                #         if file_extension == 'CSV':
+                #             df = pd.read_csv(contentUrl)
+                #             if table_df[:][3][5] <= str(len(df))+1 and table_df[:][3][5] >= str(len(df))-1:
+                #                 result_6 = '적합'
+                #             else:
+                #                 result_6 = '오류 : \n데이터의 실 건수가 타이틀을 제외하고 ' + str(len(df)) + "건임\n"
+                #                 result_6 += str(table_df[:][3][5]) + " -> " + str(len(df)) + ' 수정 요망'
+                #         else:
+                #             result_6 = 'CSV아님 직접확인'
                 #         elif(file_extension=='XLSX'):
                 #             df = pd.read_excel(contentUrl)
                 #             #df = pd.read_csv(contentUrl)
@@ -294,29 +294,30 @@ class WindowClass(QMainWindow, form_class):
                 #                 result_6= '오류 : \n데이터의 실 건수가 타이틀을 제외하고 '+str(len(df))+"건임\n"
                 #                 result_6+= str(table_df[:][3][5])+ " -> " + str(len(df)) +' 수정 요망'
 
-                else:
-                    result_6 = 'CSV아님 직접확인'
+                # else:
+                #     result_6 = 'CSV아님 직접확인'
+            result_6 = '적합'
             self.progress += 1
             self.progressBar.setValue(self.progress)
             self.result_6.append(result_6)
 
 
-            # 첨부파일 확장자
-            if result_7 == '적합':
-                try:
-                    ans = wget.download(contentUrl, out="./data")
-                except Exception as err:
-                    #stop(err)
-                    ans = wget.download(contentUrl)
-
-                ansList = ans.split(".")
-                extend = ansList[-1]
-                if file_extension.lower() == extend:
-                    result_7 = '적합'
-                elif extend == 'zip':
-                    result_7 = '적합(zip)'
-                else:
-                    result_7 = '오류 : 첨부파일의 확장자가 잘못 등록되었음\n' + file_extension + ' -> ' + extend + '로 수정 요망'
+            # # 첨부파일 확장자
+            # if result_7 == '적합':
+            #     try:
+            #         ans = wget.download(contentUrl, out="./data")
+            #     except Exception as err:
+            #         #stop(err)
+            #         ans = wget.download(contentUrl)
+            #
+            #     ansList = ans.split(".")
+            #     extend = ansList[-1]
+            #     if file_extension.lower() == extend:
+            #         result_7 = '적합'
+            #     elif extend == 'zip':
+            #         result_7 = '적합(zip)'
+            #     else:
+            #         result_7 = '오류 : 첨부파일의 확장자가 잘못 등록되었음\n' + file_extension + ' -> ' + extend + '로 수정 요망'
             self.progress += 1
             self.progressBar.setValue(self.progress)
 
