@@ -28,6 +28,7 @@ def insert_url(text):
             msg.setText('페이지를 찾을 수 없습니다!')
             msg.setStandardButtons(QMessageBox.Ok)
             msg.exec_()
+            return 0, 0, 0
 
     else:
         msg = QMessageBox()
@@ -35,3 +36,4 @@ def insert_url(text):
         msg.setText('올바른 공공데이터포털 파일데이터 주소를 입력해주세요')
         msg.setStandardButtons(QMessageBox.Ok)
         msg.exec_()
+        return 0, 0, 0

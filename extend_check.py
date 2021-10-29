@@ -38,7 +38,7 @@ def extend_check(bsObject, table_df):
         if file_extension.lower() == extend:
             result_5 = '적합'
         elif extend == 'zip':
-            result_5 = '적합(zip)'
+            result_5 = '직접확인(zip)'
         else:
             result_5 = '오류 : 첨부파일의 확장자가 잘못 등록되었음\n' + file_extension + ' -> ' + extend + '로 수정 요망'
 
