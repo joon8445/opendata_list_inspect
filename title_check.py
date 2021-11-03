@@ -42,7 +42,7 @@ def title_check(bsObject, primary_key, table_df):
                 count += 1
 
         if count > 3:
-            result_1_2_1 = '(숫자4개이상 포함) 직접확인하세요 \n오류  : 업데이트 주기가 \'수시\'가 아니면서 (일간,월간,분기,년간) 목록명에 일자,월,년도 형태(YYYYMMDD, YYYYMM, YYYY 등)의 내용이 포함되면 오류'
+            result_1_2_1 = '(숫자4개이상 포함) 직접확인하세요 오류  : \n업데이트 주기가 \'수시\'가 아니면서 (일간,월간,분기,년간) 목록명에 일자,월,년도 형태(YYYYMMDD, YYYYMM, YYYY 등)의 내용이 포함되면 오류'
             result_1_2_1 += '\n: ' + file_title
         else:
             result_1_2_1 = '적합'
