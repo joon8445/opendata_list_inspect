@@ -10,7 +10,7 @@ import wget
 
 
 form_class = uic.loadUiType("test.ui")[0]
-QLineEdit
+
 class WindowClass(QMainWindow, form_class):
     progress=0
     def __init__(self):
@@ -275,6 +275,7 @@ class WindowClass(QMainWindow, form_class):
                 self.progressBar.setValue(self.progress)
                 self.result_4.append(result_4)
             except HTTPError as err:
+                self.file_title.insert('페이지를 찾을 수 없습니다!')
                 msg = QMessageBox()
                 msg.setWindowTitle('경고')
                 msg.setText('페이지를 찾을 수 없습니다!')
