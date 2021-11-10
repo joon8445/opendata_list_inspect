@@ -25,6 +25,8 @@ def extend_check(bsObject, table_df):
             extend = ansList[-1]
             if file_extension.lower() == extend:
                 result_5 = '적합'
+            elif file_extension == extend:
+                result_5 = '적합'
             elif extend == 'zip':
                 with ZipFile(ans, 'r') as zipObj:
                     listOfFileNames = zipObj.namelist()
