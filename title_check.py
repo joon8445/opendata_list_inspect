@@ -17,7 +17,17 @@ def title_check(bsObject, primary_key, table_df):
     if file_title.startswith(corp):
         result_1_1 = '적합'
     else:
-        result_1_1 = '오류 : 기관명 누락:\n' + file_title
+        title_list = file_title.split('_')
+        corp_list = corp.split(' ')
+        chk = True
+        for i in range(len(corp_list)):
+            if corp_list[i] != title_list[i]:
+                chk = False
+                break
+        if chk:
+            result_1_1 = '적합'
+        else:
+            result_1_1 = '오류 : 기관명 누락:\n' + file_title
 
     # 등록주기 포함함
     update_cycle = table_df[:][1][4]
