@@ -22,10 +22,19 @@ def insert_url(text):
             table_df = table_df_list[0]
             return primary_key, table_df, bsObject
 
-        except HTTPError as err:
+        except HTTPError:
             msg = QMessageBox()
             msg.setWindowTitle('경고')
-            msg.setText('페이지를 찾을 수 없습니다!')
+            msg.setText('페이지를 찾을 수 없습니다. 직접확인하세요!')
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
+            return 0, 0, 0
+
+        except Exception as err:
+            print(err)
+            msg = QMessageBox()
+            msg.setWindowTitle('경고')
+            msg.setText('해당데이터는 폐기되었습니다. 직접확인하세요!')
             msg.setStandardButtons(QMessageBox.Ok)
             msg.exec_()
             return 0, 0, 0
