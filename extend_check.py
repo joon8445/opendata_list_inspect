@@ -16,7 +16,8 @@ def extend_check(bsObject, table_df):
                     contentUrl = contentUrl.split("contentUrl\": \"")[1].strip()
                     contentUrl = contentUrl.split("\"")[0].strip()
             try:
-                ans = wget.download(contentUrl, out="./data")
+                output_path = './data/'
+                ans = wget.download(contentUrl, out=output_path)
             except Exception as err:
                 # stop(err)
                 ans = wget.download(contentUrl)

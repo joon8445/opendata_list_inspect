@@ -62,8 +62,15 @@ def title_check(bsObject, primary_key, table_df):
     # 동일기관 목록명 중복
     if repeat['공공데이터_기본키'].isin([int(primary_key)]).any():
         result_1_3 = '오류'
-        is_repeat = repeat['공공데이터_제목'] == file_title
-        repeat_df = repeat[is_repeat]
+        title_list = file_title.split('_')
+        tmp = []
+        for title in title_list:
+            tmp.extend(title.split(' '))
+        title_list = tmp
+        repeat_df = repeat
+        for title in title_list:
+            is_repeat = repeat_df['공공데이터_제목'].str.contains(title, na=False)
+            repeat_df = repeat_df[is_repeat]
         count = np.array(repeat_df['중복개수'].values[0])
         result_1_3 = '오류 : \n' + str(count) + '건의 목록명이 중복됨:'
         try:
