@@ -3,9 +3,10 @@ import numpy as np
 
 def title_check(bsObject, primary_key, table_df):
     try:
-        title_data = bsObject.find('div', class_='title')
+        title_data = bsObject.find('div', class_='tit-area')
+        title_data = title_data.find('p', class_="tit")
         file_title = title_data.get_text()
-    except AttributeError as err:
+    except AttributeError:
         title_data = bsObject.find('p', class_='tit file-data-title')
         file_title = title_data.get_text()
 
@@ -61,19 +62,20 @@ def title_check(bsObject, primary_key, table_df):
 
     # 동일기관 목록명 중복
     if repeat['공공데이터_기본키'].isin([int(primary_key)]).any():
-        result_1_3 = '오류'
-        title_list = file_title.split('_')
-        tmp = []
-        for title in title_list:
-            tmp.extend(title.split(' '))
-        title_list = tmp
-        repeat_df = repeat
-        for title in title_list:
-            is_repeat = repeat_df['공공데이터_제목'].str.contains(title, na=False)
-            repeat_df = repeat_df[is_repeat]
-        count = np.array(repeat_df['중복개수'].values[0])
-        result_1_3 = '오류 : \n' + str(count) + '건의 목록명이 중복됨:'
         try:
+            result_1_3 = '오류'
+            title_list = file_title.split('_')
+            tmp = []
+            for title in title_list:
+                tmp.extend(title.split(' '))
+            title_list = tmp
+            repeat_df = repeat
+            for title in title_list:
+                is_repeat = repeat_df['공공데이터_제목'].str.contains(title, na=False)
+                repeat_df = repeat_df[is_repeat]
+            count = np.array(repeat_df['중복개수'].values[0])
+            result_1_3 = '오류 : \n' + str(count) + '건의 목록명이 중복됨:'
+
             for i in range(int(count)):
                 result_1_3 += '\n' + str(np.array(repeat_df['공공데이터_기본키'].values[i]))
                 result_1_3 += ' ' + str(np.array(repeat_df['공공데이터_제목'].values[i]))
